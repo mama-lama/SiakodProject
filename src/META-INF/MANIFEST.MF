@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: ru.vsu.sc.siakod25.g11.theme_6.demo_app.Main
+
