@@ -1,5 +1,6 @@
 package ru.vsu.sc.siakod25.g11.theme_6.structure_classes;
 
+<<<<<<< HEAD
 import java.util.Comparator;
 
 public class PriorityQueue<T> {
@@ -55,6 +56,12 @@ public class PriorityQueue<T> {
         heap = (T[]) new Object[DEFAULT_CAPACITY];
         size = 0;
     }
+=======
+public class PriorityQueue {
+    private int size;
+
+    public PriorityQueue(){}
+>>>>>>> 20a6026926ccbdf02ae25791d833257a2053c0a1
 
     public int size(){
         return size;
@@ -64,6 +71,7 @@ public class PriorityQueue<T> {
         return size == 0;
     }
 
+<<<<<<< HEAD
     //------------Приватные методы----------
     private void resize() {
         if (size == heap.length) {
@@ -142,4 +150,7 @@ public class PriorityQueue<T> {
         System.out.println(pq.toString());
         System.out.println(pq.size());
     }
+=======
+
+>>>>>>> 20a6026926ccbdf02ae25791d833257a2053c0a1
 }
