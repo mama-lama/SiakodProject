@@ -6,6 +6,13 @@ public class Character {
     private String description;
     private Relationship relationships; // Заменить на Map
 
+    public Character(int id, String name) {
+        this.id = id;
+        this.name = name;
+        this.description = null;
+        this.relationships = null; // Заменить на Map
+    }
+
     public Character(int id, String name, String description) {
         this.id = id;
         this.name = name;
@@ -48,7 +55,11 @@ public class Character {
     //public Relationship updateRelationship(Character other, int newLevel) {}
 
     public String toString() {
-        return "ID: " + id + "\nИмя: " + name + "\nОписание: " + description + "\n";
+        if (description != null) {
+            return "ID: " + id + " | Имя: " + name + " | Описание: '" + description + "';\n";
+        } else {
+            return "ID: " + id + " | Имя: " + name + " | Описание: " + description + ";\n";
+        }
     } // Переделать
 
     //-------Ошибки-------

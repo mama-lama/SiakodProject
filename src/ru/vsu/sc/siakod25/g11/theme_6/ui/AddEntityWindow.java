@@ -1,5 +1,12 @@
 package ru.vsu.sc.siakod25.g11.theme_6.ui;
 
+import ru.vsu.sc.siakod25.g11.theme_6.manager.JsonProjectManager;
+import ru.vsu.sc.siakod25.g11.theme_6.unit_classes.Project;
+import ru.vsu.sc.siakod25.g11.theme_6.unit_classes.Character;
+import ru.vsu.sc.siakod25.g11.theme_6.unit_classes.Item;
+import ru.vsu.sc.siakod25.g11.theme_6.unit_classes.Location;
+import ru.vsu.sc.siakod25.g11.theme_6.unit_classes.Plot;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -184,12 +191,56 @@ public class AddEntityWindow extends JFrame {
     }
 
     private void onSave() {
-        String msg = "Сохранение…\n" +
-                "Name: " + nameField.getText().trim() + "\n" +
-                "Parameter: " + paramCombo.getSelectedItem() + "\n" +
-                "Description: " + (descriptionArea.getText().trim().isEmpty() ? "<empty>" : descriptionArea.getText().trim()) + "\n" +
-                "Photo selected: " + (photoImage != null);
-        JOptionPane.showMessageDialog(this, msg);
+        try {
+            String name = nameField.getText().trim();
+            String description = descriptionArea.getText().trim();
+            String parameter = (String) paramCombo.getSelectedItem();
+
+            JsonProjectManager projectManager = JsonProjectManager.getInstance();
+            Project currentProject = projectManager.getCurrentProject();
+
+            if (currentProject == null) {
+                JOptionPane.showMessageDialog(this, "Сначала создайте проект!",
+                        "Ошибка", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            switch (parameter) {
+                case "Hero":
+                    int charId = currentProject.getCharacters().getSize() + 1;
+                    Character character = new Character(charId, name, description);
+                    currentProject.addCharacter(character);
+                    break;
+
+                case "Item":
+                    int itemId = currentProject.getItems().getSize() + 1;
+                    Item item = new Item(itemId, name, description);
+                    currentProject.addItem(item);
+                    break;
+
+                case "Location":
+                    int locId = currentProject.getLocations().getSize() + 1;
+                    Location location = new Location(locId, name, description);
+                    currentProject.addLocation(location);
+                    break;
+
+                case "Plot":
+                    int plotId = currentProject.getPlots().getSize() + 1;
+                    Plot plot = new Plot(plotId, name, description); // content = description для начала
+                    currentProject.addPlot(plot);
+                    break;
+            }
+
+            projectManager.saveProject();
+
+            JOptionPane.showMessageDialog(this, "Успешно сохранено в проект: " + currentProject.getProjectName());
+            new CreateWindow().setVisible(true);
+            dispose();
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Ошибка: " + ex.getMessage(),
+                    "Ошибка", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public static void main(String[] args) {

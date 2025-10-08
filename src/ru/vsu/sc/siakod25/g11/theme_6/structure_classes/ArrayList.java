@@ -74,8 +74,12 @@ public class ArrayList<E> {
         return indexOf(o) >= 0;
     }
 
-    public Object[] toArray(){
-        return copyOf(data, size);
+    public E[] toArray(){
+        E[] result = (E[]) new Object[size];
+        for (int i = 0; i < size; i++) {
+            result[i] = data[i];
+        }
+        return result;
     }
     //---------Вспомогательные методы---------------
     public int indexOf(Object o){
@@ -105,6 +109,23 @@ public class ArrayList<E> {
             }
         }
         sb.append("]");
+        return sb.toString();
+    }
+
+    public String[] toStringArray() {
+        String[] result = new String[size];
+        for (int i = 0; i < size; i++) {
+            result[i] = String.valueOf(data[i]);
+        }
+        return result;
+    }
+
+    public String toString1(){
+        StringBuilder sb = new StringBuilder("----\n");
+        for (int i = 0; i < size; i++) {
+            sb.append(data[i]);
+        }
+        sb.append("----");
         return sb.toString();
     }
 

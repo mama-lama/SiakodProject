@@ -7,10 +7,18 @@ public class Item {
     private int ownerId;
 
     //-------Конструкторы-------
+    public Item(int id, String name) {
+        this.id = id;
+        this.name = name;
+        this.description = null;
+        this.ownerId = 0;
+    }
+
     public Item(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.ownerId = 0;
     }
     public Item(int id, String name, String description, int ownerId) {
         this.id = id;
@@ -44,7 +52,11 @@ public class Item {
         this.ownerId = ownerId;
     }
     public String toString() {
-        return "ID: " + id + "\nНазвание: " + name + "\nОписание: " + description + "\n";
+        if (description != null) {
+            return "ID: " + id + " | Название: " + name + " | Описание: '" + description + "';\n";
+        } else {
+            return "ID: " + id + " | Название: " + name + " | Описание: " + description + ";\n";
+        }
     }
 
     //-------Ошибки-------

@@ -1,5 +1,7 @@
 package ru.vsu.sc.siakod25.g11.theme_6.ui;
 
+import ru.vsu.sc.siakod25.g11.theme_6.manager.JsonProjectManager;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -37,6 +39,13 @@ public class CreateWindow extends JFrame {
         add(buildTopBar(), BorderLayout.NORTH);
         add(buildCenter(), BorderLayout.CENTER);
         add(buildSidebar(), BorderLayout.EAST);
+
+        //-----------------------------------------------------
+        JsonProjectManager manager = JsonProjectManager.getInstance();
+        if (manager.getCurrentProject() != null) {
+            nameField.setText(manager.getCurrentProject().getProjectName());
+        }
+        //-----------------------------------------------------
     }
 
     // ===== Сборка интерфейса =====

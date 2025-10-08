@@ -6,6 +6,12 @@ public class Location {
     private String description;
 
     //-------Конструкторы-------
+    public Location(int id, String name) {
+        this.id = id;
+        this.name = name;
+        this.description = null;
+    }
+
     public Location(int id, String name, String description) {
         this.id = id;
         this.name = name;
@@ -32,7 +38,11 @@ public class Location {
     }
 
     public String toString() {
-        return "ID: " + id + "\nНазвание: " + name + "\nОписание: " + description + "\n";
+        if (description != null) {
+            return "ID: " + id + " | Название: " + name + " | Описание: '" + description + "';\n";
+        } else {
+            return "ID: " + id + " | Название: " + name + " | Описание: " + description + ";\n";
+        }
     }
 
     //-------Ошибки-------

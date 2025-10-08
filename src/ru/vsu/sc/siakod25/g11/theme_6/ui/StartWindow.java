@@ -76,7 +76,7 @@ public class StartWindow extends JFrame {
 
     private void wireActions() {
         createBtn.addActionListener(e -> {
-            new CreateWindow().setVisible(true);
+            new NewProjectWindow().setVisible(true);
             dispose();
         });
 
