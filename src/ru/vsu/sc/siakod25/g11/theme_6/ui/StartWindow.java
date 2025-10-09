@@ -3,21 +3,15 @@ package ru.vsu.sc.siakod25.g11.theme_6.ui;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Стартовое окно приложения.
- * Стиль: единые шрифты, отступы, именование и структура.
- */
+
 public class StartWindow extends JFrame {
 
-    // ===== Константы оформления =====
     private static final int WIDTH = 1200;
-    private static final int HEIGHT = 1000;
+    private static final int HEIGHT = 800;
     private static final Font TITLE_FONT  = new Font("Arial", Font.BOLD, 48);
     private static final Font BUTTON_FONT = new Font("Arial", Font.BOLD, 28);
     private static final BorderLayout LAYOUT_BORDER = new BorderLayout();
-    private static final Insets GRID_INSETS = new Insets(0, 0, 0, 0);
 
-    // ===== Компоненты =====
     private JButton createBtn;
     private JButton collectionBtn;
     private JButton feedbackBtn;
@@ -32,23 +26,18 @@ public class StartWindow extends JFrame {
 
         add(buildContent(), BorderLayout.CENTER);
     }
-
-    // ===== Сборка интерфейса =====
     private JComponent buildContent() {
-        // Центральная панель для центрирования всего контента
         JPanel main = new JPanel(new GridBagLayout());
         main.setBorder(BorderFactory.createEmptyBorder(100, 200, 100, 200));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0; gbc.weightx = 1; gbc.fill = GridBagConstraints.NONE;
         gbc.insets = new Insets(20, 0, 20, 0);
 
-        // Заголовок
         JLabel title = new JLabel("Our Project", SwingConstants.CENTER);
         title.setFont(TITLE_FONT);
         gbc.gridy = 0;
         main.add(title, gbc);
 
-        // Блок кнопок
         JPanel buttons = new JPanel(new GridLayout(3, 1, 30, 30));
         createBtn     = makePrimaryButton("Create");
         collectionBtn = makePrimaryButton("Collection");
@@ -61,7 +50,6 @@ public class StartWindow extends JFrame {
         gbc.gridy = 1;
         main.add(buttons, gbc);
 
-        // Действия
         wireActions();
 
         return main;
@@ -85,9 +73,10 @@ public class StartWindow extends JFrame {
             dispose();
         });
 
-        feedbackBtn.addActionListener(e ->
-            JOptionPane.showMessageDialog(this, "Feedback: заглушка")
-        );
+        feedbackBtn.addActionListener(e -> {
+            new FeedbackWindow().setVisible(true);
+            dispose();
+        });
     }
 
     public static void main(String[] args) {

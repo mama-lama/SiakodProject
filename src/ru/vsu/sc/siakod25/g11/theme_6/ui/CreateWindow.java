@@ -5,19 +5,14 @@ import ru.vsu.sc.siakod25.g11.theme_6.manager.JsonProjectManager;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Окно "Create": верхняя панель (назад, name, поиск), справа разделы, в центре кнопка добавления.
- */
 public class CreateWindow extends JFrame {
 
-    // ===== Константы оформления =====
     private static final int WIDTH = 1200;
-    private static final int HEIGHT = 1000;
+    private static final int HEIGHT = 800;
     private static final Font TITLE_FONT   = new Font("Arial", Font.BOLD, 22);
     private static final Font BUTTON_FONT  = new Font("Arial", Font.BOLD, 20);
     private static final Font SIDEBAR_FONT = new Font("Arial", Font.BOLD, 20);
 
-    // ===== Компоненты =====
     private JButton backBtn;
     private JTextField nameField;
     private JButton searchBtn;
@@ -40,15 +35,12 @@ public class CreateWindow extends JFrame {
         add(buildCenter(), BorderLayout.CENTER);
         add(buildSidebar(), BorderLayout.EAST);
 
-        //-----------------------------------------------------
         JsonProjectManager manager = JsonProjectManager.getInstance();
         if (manager.getCurrentProject() != null) {
             nameField.setText(manager.getCurrentProject().getProjectName());
         }
-        //-----------------------------------------------------
     }
 
-    // ===== Сборка интерфейса =====
     private JComponent buildTopBar() {
         JPanel top = new JPanel(new BorderLayout(15, 15));
         top.setBorder(BorderFactory.createEmptyBorder(20, 20, 12, 20));
@@ -70,9 +62,8 @@ public class CreateWindow extends JFrame {
         top.add(nameField, BorderLayout.CENTER);
         top.add(searchBtn, BorderLayout.EAST);
 
-        // Навигация
         backBtn.addActionListener(e -> { new StartWindow().setVisible(true); dispose(); });
-        searchBtn.addActionListener(e -> JOptionPane.showMessageDialog(this, "Поиск (заглушка)"));
+        searchBtn.addActionListener(e ->  { /* no-op */ });
 
         return top;
     }
@@ -86,7 +77,10 @@ public class CreateWindow extends JFrame {
         addBtn.setPreferredSize(new Dimension(260, 110));
         center.add(addBtn);
 
-        addBtn.addActionListener(e -> new AddEntityWindow().setVisible(true));
+        addBtn.addActionListener(e -> {
+            new AddEntityWindow().setVisible(true);
+            dispose();
+        });
         return center;
     }
 
@@ -104,11 +98,10 @@ public class CreateWindow extends JFrame {
         right.add(locationsBtn);
         right.add(plotBtn);
 
-        // Заглушки
-        heroesBtn.addActionListener(e -> JOptionPane.showMessageDialog(this, "Heroes (заглушка)"));
-        itemsBtn.addActionListener(e -> JOptionPane.showMessageDialog(this, "Items (заглушка)"));
-        locationsBtn.addActionListener(e -> JOptionPane.showMessageDialog(this, "Locations (заглушка)"));
-        plotBtn.addActionListener(e -> JOptionPane.showMessageDialog(this, "Plot (заглушка)"));
+        heroesBtn.addActionListener(e -> { new EntitiesWindow(EntityType.CHARACTERS).setVisible(true); dispose(); });
+        itemsBtn.addActionListener(e -> { new EntitiesWindow(EntityType.ITEMS).setVisible(true); dispose(); });
+        locationsBtn.addActionListener(e -> { new EntitiesWindow(EntityType.LOCATIONS).setVisible(true); dispose(); });
+        plotBtn.addActionListener(e -> { new EntitiesWindow(EntityType.PLOTS).setVisible(true); dispose(); });
 
         return right;
     }
@@ -120,7 +113,5 @@ public class CreateWindow extends JFrame {
         return b;
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new CreateWindow().setVisible(true));
     }
-}
+

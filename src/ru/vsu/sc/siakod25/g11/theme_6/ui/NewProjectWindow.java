@@ -17,9 +17,9 @@ public class NewProjectWindow extends JFrame {
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         nameField = new JTextField();
-        JButton createBtn = new JButton("Создать");
+        JButton createBtn = new JButton("Create");
 
-        panel.add(new JLabel("Название проекта:"), BorderLayout.NORTH);
+        panel.add(new JLabel("Name:"), BorderLayout.NORTH);
         panel.add(nameField, BorderLayout.CENTER);
         panel.add(createBtn, BorderLayout.SOUTH);
 
