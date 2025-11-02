@@ -5,14 +5,19 @@ import ru.vsu.sc.siakod25.g11.theme_6.manager.JsonProjectManager;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Окно "Create": верхняя панель (назад, name, поиск), справа разделы, в центре кнопка добавления.
+ */
 public class CreateWindow extends JFrame {
 
+    // ===== Константы оформления =====
     private static final int WIDTH = 1200;
-    private static final int HEIGHT = 800;
+    private static final int HEIGHT = 1000;
     private static final Font TITLE_FONT   = new Font("Arial", Font.BOLD, 22);
     private static final Font BUTTON_FONT  = new Font("Arial", Font.BOLD, 20);
     private static final Font SIDEBAR_FONT = new Font("Arial", Font.BOLD, 20);
 
+    // ===== Компоненты =====
     private JButton backBtn;
     private JTextField nameField;
     private JButton searchBtn;
