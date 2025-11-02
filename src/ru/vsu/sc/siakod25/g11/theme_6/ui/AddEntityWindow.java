@@ -19,13 +19,11 @@ import java.io.File;
  */
 public class AddEntityWindow extends JFrame {
 
-    // ===== Константы оформления =====
     private static final int WIDTH = 1200;
-    private static final int HEIGHT = 1000;
+    private static final int HEIGHT = 800;
     private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 18);
     private static final Color UNDERLINE = new Color(120, 120, 120);
 
-    // ===== Компоненты =====
     private JButton backBtn;
     private JTextField headerName;
     private JButton saveBtn;
@@ -58,7 +56,10 @@ public class AddEntityWindow extends JFrame {
         backBtn.setPreferredSize(new Dimension(90, 40));
         saveBtn.setPreferredSize(new Dimension(90, 40));
 
-        headerName = new JTextField("Название проекта");
+        JsonProjectManager pm = JsonProjectManager.getInstance();
+        Project cur = pm.getCurrentProject();
+
+        headerName = new JTextField(cur != null ? cur.getProjectName() : "— проект не загружен —");
         headerName.setHorizontalAlignment(SwingConstants.CENTER);
         headerName.setEditable(false);
         headerName.setFont(TITLE_FONT);
@@ -84,7 +85,7 @@ public class AddEntityWindow extends JFrame {
         JPanel photoPanel = new JPanel(new BorderLayout(8, 8));
         photoPanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
-        photoPreview = new JLabel("Foto", SwingConstants.CENTER);
+        photoPreview = new JLabel("Photo", SwingConstants.CENTER);
         photoPreview.setPreferredSize(new Dimension(260, 320));
         photoPreview.setOpaque(true);
         photoPreview.setBackground(new Color(245, 245, 245));
@@ -158,7 +159,6 @@ public class AddEntityWindow extends JFrame {
         return center;
     }
 
-    // ===== Действия =====
     private void choosePhoto() {
         JFileChooser fc = new JFileChooser();
         fc.setDialogTitle("Выберите изображение");
@@ -226,7 +226,7 @@ public class AddEntityWindow extends JFrame {
 
                 case "Plot":
                     int plotId = currentProject.getPlots().getSize() + 1;
-                    Plot plot = new Plot(plotId, name, description); // content = description для начала
+                    Plot plot = new Plot(plotId, name, description);
                     currentProject.addPlot(plot);
                     break;
             }
@@ -241,9 +241,5 @@ public class AddEntityWindow extends JFrame {
             JOptionPane.showMessageDialog(this, "Ошибка: " + ex.getMessage(),
                     "Ошибка", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new AddEntityWindow().setVisible(true));
     }
 }

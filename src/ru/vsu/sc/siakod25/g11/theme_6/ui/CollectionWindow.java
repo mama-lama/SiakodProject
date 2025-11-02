@@ -1,162 +1,115 @@
 package ru.vsu.sc.siakod25.g11.theme_6.ui;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import java.awt.*;
-import java.awt.event.ActionListener;
+import ru.vsu.sc.siakod25.g11.theme_6.manager.JsonProjectManager;
 
-/**
- * Окно "Collection": верхняя панель (← | Search) и таблица:
- * [Name | Изменить | Удалить].
- * Стиль унифицирован с остальными окнами приложения.
- */
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+
 public class CollectionWindow extends JFrame {
 
-    // ===== Константы оформления =====
-    private static final int  WIDTH       = 1200;
-    private static final int  HEIGHT      = 1000;
-    private static final Font HEADER_FONT = new Font("Arial", Font.BOLD, 16);
-    private static final Font CELL_FONT   = new Font("Arial", Font.PLAIN, 16);
-    private static final Font BTN_FONT    = new Font("Arial", Font.PLAIN, 14);
+    private static final int WIDTH = 1200;
+    private static final int HEIGHT = 800;
+    private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 22);
 
-    // ===== Компоненты =====
-    private JTable table;
+    private final JsonProjectManager pm = JsonProjectManager.getInstance();
+    private final DefaultListModel<String> model = new DefaultListModel<>();
+    private JList<String> list;
+    private JTextField search;
 
     public CollectionWindow() {
-        super("Collection");
+        super("Projects");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(WIDTH, HEIGHT);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
-
-        add(buildTopBar(), BorderLayout.NORTH);
-        add(buildTable(), BorderLayout.CENTER);
+        initUI();
+        reload();
     }
 
-    // ===== Верхняя панель =====
-    private JComponent buildTopBar() {
-        JPanel top = new JPanel(new BorderLayout(10, 10));
-        top.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    private void initUI() {
+        JPanel root = new JPanel(new BorderLayout(12, 12));
+        root.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-        JButton backBtn   = new JButton("←");
-        JButton searchBtn = new JButton("Search");
-        backBtn.setPreferredSize(new Dimension(80, 40));
-        searchBtn.setPreferredSize(new Dimension(100, 40));
+        JPanel top = new JPanel(new BorderLayout(8, 8));
 
-        top.add(backBtn,   BorderLayout.WEST);
-        top.add(searchBtn, BorderLayout.EAST);
+        JButton back = new JButton("←");
+        back.setFont(TITLE_FONT);
+        back.addActionListener(e -> { new StartWindow().setVisible(true); dispose(); });
+        top.add(back, BorderLayout.WEST);
 
-        // Навигация и заглушки
-        backBtn.addActionListener(e -> { new StartWindow().setVisible(true); dispose(); });
-        searchBtn.addActionListener(e -> JOptionPane.showMessageDialog(this, "Поиск (заглушка)"));
-        return top;
-    }
+        JLabel title = new JLabel("Projects");
+        title.setFont(TITLE_FONT);
+        JPanel center = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        center.add(title);
+        top.add(center, BorderLayout.CENTER);
 
-    // ===== Центральная таблица =====
-    private JComponent buildTable() {
-        String[] cols = {"Name", "Изменить", "Удалить"};
-        Object[][] data = {
-                {"name 5", null, null},
-                {"name 4", null, null},
-                {"name 3", null, null},
-                {"name 2", null, null},
-                {"name 1", null, null}
-        };
+        JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        search = new JTextField(24);
+        JButton find = new JButton("Find");
+        find.addActionListener(e -> reload());
+        right.add(search);
+        right.add(find);
+        top.add(right, BorderLayout.EAST);
 
-        DefaultTableModel model = new DefaultTableModel(data, cols) {
-            @Override public boolean isCellEditable(int row, int column) { return column != 0; }
-        };
+        root.add(top, BorderLayout.NORTH);
 
-        table = new JTable(model);
-        table.setRowHeight(40);
-        table.setFont(CELL_FONT);
-        table.getTableHeader().setFont(HEADER_FONT);
-        table.setFillsViewportHeight(true);
-
-        // Широкий столбец Name
-        table.getColumnModel().getColumn(0).setPreferredWidth(600);
-
-        // Колонка "Изменить"
-        TableColumn editCol = table.getColumnModel().getColumn(1);
-        editCol.setCellRenderer(new TextButtonRenderer("Изменить"));
-        editCol.setCellEditor(new TextButtonEditor("Изменить", () -> {
-            int r = table.getSelectedRow();
-            if (r >= 0) {
-                String name = String.valueOf(table.getValueAt(r, 0));
-                JOptionPane.showMessageDialog(table, "Редактировать: " + name);
+        list = new JList<>(model);
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        list.setFont(new Font("Arial", Font.PLAIN, 18));
+        list.addMouseListener(new MouseAdapter() {
+            @Override public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) openSelected();
             }
-        }));
+        });
+        root.add(new JScrollPane(list), BorderLayout.CENTER);
 
-        // Колонка "Удалить" (с подтверждением)
-        TableColumn delCol = table.getColumnModel().getColumn(2);
-        delCol.setCellRenderer(new TextButtonRenderer("Удалить"));
-        delCol.setCellEditor(new TextButtonEditor("Удалить", () -> {
-            int r = table.getSelectedRow();
-            if (r >= 0) {
-                String name = String.valueOf(table.getValueAt(r, 0));
-                int choice = JOptionPane.showConfirmDialog(
-                        table,
-                        "Удалить запись: \"" + name + "\"?",
-                        "Подтверждение удаления",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE
-                );
-                if (choice == JOptionPane.YES_OPTION) {
-                    ((DefaultTableModel) table.getModel()).removeRow(r);
-                }
-            }
-        }));
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton btnNew = new JButton("New");
+        btnNew.addActionListener(e -> {
+            new NewProjectWindow().setVisible(true);
+            dispose();
+        });
+        JButton btnDelete = new JButton("Delete");
+        btnDelete.addActionListener(e -> deleteSelected());
+        JButton btnOpen = new JButton("Open");
+        btnOpen.addActionListener(e -> openSelected());
 
-        JScrollPane scroll = new JScrollPane(table);
-        scroll.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        return scroll;
+        bottom.add(btnNew);
+        bottom.add(btnDelete);
+        bottom.add(btnOpen);
+        root.add(bottom, BorderLayout.SOUTH);
+
+        setContentPane(root);
     }
 
-    // ===== Рендерер кнопки с текстом =====
-    private static class TextButtonRenderer extends JButton implements TableCellRenderer {
-        TextButtonRenderer(String text) {
-            setText(text);
-            setFont(BTN_FONT);
-        }
-        @Override
-        public Component getTableCellRendererComponent(JTable t, Object v, boolean s, boolean f, int r, int c) {
-            return this;
+    private void reload() {
+        model.clear();
+        String q = search != null ? search.getText().trim().toLowerCase() : "";
+        String[] projects = pm.getExistingProjects();
+        for (String p : projects) {
+            if (q.isEmpty() || p.toLowerCase().contains(q)) model.addElement(p);
         }
     }
 
-    // ===== Редактор кнопки с текстом =====
-    private static class TextButtonEditor extends DefaultCellEditor {
-        private final JButton button = new JButton();
-        private final Runnable onClick;
-
-        TextButtonEditor(String text, Runnable onClick) {
-            super(new JCheckBox());
-            this.onClick = onClick;
-            button.setText(text);
-            button.setFont(BTN_FONT);
-            // слушатель для закрытия редактора ячейки
-            button.addActionListener(e -> fireEditingStopped());
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable t, Object v, boolean s, int r, int c) {
-            // очищаем пользовательские слушатели, чтобы не дублировались
-            for (ActionListener al : button.getActionListeners()) {
-                button.removeActionListener(al);
-            }
-            // снова добавляем: сначала закрыть редактор, затем выполнить действие
-            button.addActionListener(e -> fireEditingStopped());
-            button.addActionListener(e -> onClick.run());
-            return button;
-        }
-
-        @Override public Object getCellEditorValue() { return null; }
+    private void openSelected() {
+        String name = list.getSelectedValue();
+        if (name == null) return;
+        pm.loadProject(name);
+        new CreateWindow().setVisible(true);
+        dispose();
     }
 
-    // ===== Тестовый запуск =====
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new CollectionWindow().setVisible(true));
+    private void deleteSelected() {
+        String name = list.getSelectedValue();
+        if (name == null) return;
+        int ok = JOptionPane.showConfirmDialog(this,
+                "Удалить проект \"" + name + "\"?", "Confirm", JOptionPane.YES_NO_OPTION);
+        if (ok == JOptionPane.YES_OPTION) {
+            File f = new File(pm.getProgectsDir(), name + ".json");
+            if (f.exists()) f.delete();
+            reload();
+        }
     }
 }
